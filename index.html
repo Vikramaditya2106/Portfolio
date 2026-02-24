@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultimate Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins}
+
+body{
+ background:#0f172a;
+ color:white;
+ overflow-x:hidden;
+ transition:.4s;
+}
+
+body.light{
+ background:#f1f5f9;
+ color:#0f172a;
+}
+
+header{
+ position:fixed;
+ width:100%;
+ display:flex;
+ justify-content:space-between;
+ padding:18px 8%;
+ backdrop-filter:blur(12px);
+ z-index:1000;
+}
+
+.logo{font-size:24px;font-weight:800}
+
+nav a{
+ margin-left:25px;
+ text-decoration:none;
+ color:inherit;
+ font-weight:500;
+ position:relative;
+}
+
+nav a::after{
+ content:"";
+ position:absolute;
+ width:0%;
+ height:2px;
+ bottom:-5px;
+ left:0;
+ background:#38bdf8;
+ transition:.3s;
+}
+nav a:hover::after{width:100%}
+
+.toggle{
+ cursor:pointer;
+ padding:8px 16px;
+ border-radius:20px;
+ background:#38bdf8;
+ color:white;
+ border:none;
+}
+
+section{padding:120px 8%}
+
+.hero{height:100vh;display:flex;flex-direction:column;justify-content:center}
+.hero h1{font-size:64px}
+
+.typing{color:#38bdf8;border-right:3px solid;white-space:nowrap;overflow:hidden;width:0}
+
+.btn{
+ margin-top:25px;
+ padding:14px 30px;
+ border:none;
+ border-radius:30px;
+ background:linear-gradient(90deg,#38bdf8,#a78bfa);
+ color:white;
+ cursor:pointer;
+ transition:.3s;
+}
+.btn:hover{transform:scale(1.1)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+
+.card{
+ padding:25px;
+ border-radius:20px;
+ background:rgba(255,255,255,0.06);
+ backdrop-filter:blur(10px);
+ transition:.4s;
+}
+.card:hover{transform:translateY(-12px) scale(1.05)}
+
+.skills span{
+ display:inline-block;
+ padding:10px 20px;
+ margin:8px;
+ border-radius:20px;
+ background:#1e293b;
+ transition:.3s;
+}
+.skills span:hover{background:#38bdf8;transform:scale(1.1)}
+
+footer{text-align:center;padding:40px;color:#94a3b8}
+
+.reveal{opacity:0;transform:translateY(80px);transition:1s}
+.reveal.active{opacity:1;transform:translateY(0)}
+
+.cursor{
+ width:18px;height:18px;border:2px solid #38bdf8;border-radius:50%;position:fixed;pointer-events:none;transform:translate(-50%,-50%);z-index:9999
+}
+
+#threebg{position:fixed;top:0;left:0;z-index:-1}
+
+form input,form textarea{
+ width:100%;
+ margin:10px 0;
+ padding:12px;
+ border-radius:10px;
+ border:none;
+ outline:none;
+}
+
+</style>
+</head>
+<body>
+
+<canvas id="threebg"></canvas>
+<div class="cursor"></div>
+
+<header>
+<div class="logo">Portfolio</div>
+<nav>
+<a href="#">Home</a>
+<a href="#about">About</a>
+<a href="#skills">Skills</a>
+<a href="#projects">Projects</a>
+<a href="#contact">Contact</a>
+</nav>
+<button class="toggle" onclick="toggleMode()">Mode</button>
+</header>
+
+<section class="hero">
+<h1>Hi I'm Vikram</h1>
+<h2 class="typing" id="typing"></h2>
+<button class="btn">Hire Me</button>
+</section>
+
+<section id="about" class="reveal">
+<h2>About</h2>
+<p>Modern developer building high performance web apps with advanced UI and animation.</p>
+</section>
+
+<section id="skills" class="reveal">
+<h2>Skills</h2>
+<div class="skills">
+<span>HTML</span><span>CSS</span><span>JavaScript</span><span>React</span><span>Node</span><span>MongoDB</span><span>Postgres</span><span>Cybersecurity</span>
+</div>
+</section>
+
+<section id="projects" class="reveal">
+<h2>Projects</h2>
+<div class="cards" id="projectsContainer"></div>
+</section>
+
+<section id="contact" class="reveal">
+<h2>Contact</h2>
+<p style="font-size:20px;margin-top:10px">📧 vikram@example.com</p>
+</section>
+
+<footer>© 2026 Vikram Portfolio</footer>
+
+<script>
+
+// DARK MODE
+function toggleMode(){document.body.classList.toggle('light')}
+
+// SCROLL REVEAL
+const reveals=document.querySelectorAll('.reveal');
+window.addEventListener('scroll',()=>{
+reveals.forEach(el=>{
+if(el.getBoundingClientRect().top<window.innerHeight-100){el.classList.add('active')}
+})})
+
+// CURSOR
+const cursor=document.querySelector('.cursor');
+document.addEventListener('mousemove',e=>{
+cursor.style.left=e.clientX+'px';
+cursor.style.top=e.clientY+'px';})
+
+// GSAP HERO ANIMATION
+gsap.from('.hero h1',{y:-80,opacity:0,duration:1});
+gsap.from('.hero .btn',{scale:0,opacity:0,duration:1,delay:.5});
+
+// TYPING EFFECT
+const text="Full Stack Developer | Problem Solver | Tech Enthusiast";
+let i=0;
+function type(){
+if(i<text.length){
+document.getElementById('typing').textContent+=text.charAt(i);
+i++;setTimeout(type,40)} }
+type();
+
+// GITHUB PROJECT LOADER
+async function loadRepos(){
+try{
+let res=await fetch('https://api.github.com/users/Vikramaditya2106/repos');
+let data=await res.json();
+let container=document.getElementById('projectsContainer');
+data.slice(0,6).forEach(repo=>{
+container.innerHTML+=`<div class="card"><h3>${repo.name}</h3><p>${repo.description||"No description"}</p></div>`
+})
+}catch{document.getElementById('projectsContainer').innerHTML='<p>Add your GitHub username</p>'}
+}
+loadRepos();
+
+
+
+// THREE.JS BACKGROUND
+const canvas=document.getElementById('threebg');
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
+const renderer=new THREE.WebGLRenderer({canvas,alpha:true});
+renderer.setSize(innerWidth,innerHeight);
+camera.position.z=5;
+
+const geometry=new THREE.BufferGeometry();
+const vertices=[];
+for(let i=0;i<5000;i++){
+vertices.push((Math.random()-0.5)*10);
+vertices.push((Math.random()-0.5)*10);
+vertices.push((Math.random()-0.5)*10);
+}
+geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
+
+const material=new THREE.PointsMaterial({size:0.02});
+const points=new THREE.Points(geometry,material);
+scene.add(points);
+
+function animate(){
+requestAnimationFrame(animate);
+points.rotation.y+=0.0005;
+renderer.render(scene,camera);
+}
+animate();
+
+</script>
+</body>
+</html>

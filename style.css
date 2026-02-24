@@ -1,0 +1,44 @@
+body{
+  margin:0;
+  font-family:Arial;
+  scroll-behavior:smooth;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  padding:15px 50px;
+  background:black;
+  color:white;
+}
+
+nav a{
+  color:white;
+  margin-left:20px;
+  text-decoration:none;
+}
+
+.hero{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(45deg,#4facfe,#00f2fe);
+  color:white;
+}
+
+section{
+  padding:80px 100px;
+}
+
+.card{
+  background:#eee;
+  padding:20px;
+  margin:10px 0;
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:scale(1.05);
+}
